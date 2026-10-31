@@ -1,0 +1,51 @@
+// flexbox mixins
+@mixin flex-layout(
+  $direction: row,
+  $justify: flex-start,
+  $align: stretch,
+  $wrap: nowrap,
+  $gap: 0
+) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+  gap: $gap;
+}
+
+@mixin flex-center($direction: row, $gap: 0) {
+  @include flex-layout($direction, center, center, nowrap, $gap);
+}
+
+// Aligns items at the start of the main axis.
+@mixin flex-left($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, flex-start, $align, nowrap, $gap);
+}
+
+// Aligns items at the end of the main axis.
+@mixin flex-right($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, flex-end, $align, nowrap, $gap);
+}
+
+// Aligns items at the start of the cross axis.
+@mixin flex-top($direction: row, $justify: flex-start, $gap: 0) {
+  @include flex-layout($direction, $justify, flex-start, nowrap, $gap);
+}
+
+// Aligns items at the end of the cross axis.
+@mixin flex-bottom($direction: row, $justify: flex-start, $gap: 0) {
+  @include flex-layout($direction, $justify, flex-end, nowrap, $gap);
+}
+
+@mixin flex-between($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, space-between, $align, nowrap, $gap);
+}
+
+@mixin flex-around($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, space-around, $align, nowrap, $gap);
+}
+
+@mixin flex-column($justify: flex-start, $align: stretch, $gap: 0) {
+  @include flex-layout(column, $justify, $align, nowrap, $gap);
+}

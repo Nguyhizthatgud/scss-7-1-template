@@ -1,0 +1,111 @@
+@use "sass:map";
+@use "sass:meta";
+
+@use "variables" as tokens;
+
+@function token($group, $key) {
+  $collection: map.get(tokens.$colors, $key);
+
+  @if $group == colors {
+    $collection: map.get(tokens.$colors, $key);
+  } @else if $group == spacing {
+    $collection: map.get(tokens.$spacing, $key);
+  } @else if $group == font-size {
+    $collection: map.get(tokens.$font-size, $key);
+  } @else if $group == font-weight {
+    $collection: map.get(tokens.$font-weight, $key);
+  } @else if $group == line-height {
+    $collection: map.get(tokens.$line-height, $key);
+  } @else if $group == radius {
+    $collection: map.get(tokens.$radius, $key);
+  } @else if $group == shadow {
+    $collection: map.get(tokens.$shadow, $key);
+  } @else {
+    @error "Unknown token group `#{$group}`.";
+  }
+
+  @if $collection == null {
+    @error "Unknown #{$group} token `#{$key}`.";
+  }
+
+  @return $collection;
+}
+
+@function color($name) {
+  @return token(colors, $name);
+}
+
+@function theme-color($name) {
+  @if not map.has-key(tokens.$theme-colors-light, $name) {
+    @error "Unknown theme color `#{$name}`.";
+  }
+
+  @return var(--color-#{$name});
+}
+
+@function spacing($key) {
+  @return token(spacing, $key);
+}
+
+@function css-value($property, $value) {
+  @if not map.has-key(tokens.$css-values, $property) {
+    @error "Unknown CSS value group `#{$property}`.";
+  }
+
+  $values: map.get(tokens.$css-values, $property);
+
+  @if not map.has-key($values, $value) {
+    @error "Unknown `#{$value}` value for CSS property group `#{$property}`.";
+  }
+
+  @return map.get($values, $value);
+}
+
+@function display($value) {
+  @return css-value(display, $value);
+}
+
+@function position($value) {
+  @return css-value(position, $value);
+}
+
+@function overflow($value) {
+  @return css-value(overflow, $value);
+}
+
+@function flex-direction($value) {
+  @return css-value(flex-direction, $value);
+}
+
+@function justify-content($value) {
+  @return css-value(justify-content, $value);
+}
+
+@function align-items($value) {
+  @return css-value(align-items, $value);
+}
+
+@function z-index($layer) {
+  $layers: (
+    base: 0,
+    dropdown: 10,
+    sticky: 20,
+    overlay: 30,
+    modal: 40,
+    toast: 50,
+  );
+
+  @if map.has-key($layers, $layer) {
+    @return map.get($layers, $layer);
+  }
+
+  @error "Unknown z-index layer `#{$layer}`.";
+}
+
+@function to-rem($pixels, $base: 16px) {
+  @if meta.type-of($pixels) != number or meta.type-of($base) != number {
+    @error "to-rem() expects numeric values.";
+  }
+
+  @return ($pixels / $base) * 1rem;
+}

@@ -1,0 +1,130 @@
+@use "sass:math";
+@use "sass:map";
+
+// flexbox mixins
+@mixin flex-layout(
+  $direction: row,
+  $justify: flex-start,
+  $align: stretch,
+  $wrap: nowrap,
+  $gap: 0
+) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+  gap: $gap;
+}
+
+@mixin flex-center($direction: row, $gap: 0) {
+  @include flex-layout($direction, center, center, nowrap, $gap);
+}
+
+// Aligns items at the start of the main axis.
+@mixin flex-left($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, flex-start, $align, nowrap, $gap);
+}
+
+// Aligns items at the end of the main axis.
+@mixin flex-right($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, flex-end, $align, nowrap, $gap);
+}
+
+// Aligns items at the start of the cross axis.
+@mixin flex-top($direction: row, $justify: flex-start, $gap: 0) {
+  @include flex-layout($direction, $justify, flex-start, nowrap, $gap);
+}
+
+// Aligns items at the end of the cross axis.
+@mixin flex-bottom($direction: row, $justify: flex-start, $gap: 0) {
+  @include flex-layout($direction, $justify, flex-end, nowrap, $gap);
+}
+// Aligns items with equal space between them along the main axis.
+@mixin flex-between($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, space-between, $align, nowrap, $gap);
+}
+// Aligns items with equal space around them along the main axis.
+@mixin flex-around($direction: row, $align: center, $gap: 0) {
+  @include flex-layout($direction, space-around, $align, nowrap, $gap);
+}
+// Aligns items at the center of the main axis and cross axis.
+@mixin flex-column($justify: flex-start, $align: stretch, $gap: 0) {
+  @include flex-layout(column, $justify, $align, nowrap, $gap);
+}
+
+// grid mixins
+@mixin grid-layout(
+  $columns: 1fr,
+  $rows: auto,
+  $gap: 0,
+  $justify-items: stretch,
+  $align-items: stretch
+) {
+  display: grid;
+  grid-template-columns: $columns;
+  grid-template-rows: $rows;
+  gap: $gap;
+  justify-items: $justify-items;
+  align-items: $align-items;
+}
+// 1. Lưới cố định số lượng cột (Fixed Columns)
+@mixin grid-columns($columns: 1, $gap: 0) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+// 2. Lưới Responsive tự động (Auto-fit)
+// Tự động lấp đầy khoảng trống, thẻ con không bao giờ nhỏ hơn $min-width
+@mixin grid-auto-fit($min-width: 250px, $gap: 16px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+// 3. Lưới Responsive giữ nguyên ô trống (Auto-fill)
+// Tương tự auto-fit nhưng giữ lại các ô lưới trống nếu container còn dư chỗ
+@mixin grid-auto-fill($min-width: 250px, $gap: 16px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+// 4. Căn giữa tuyệt đối cực nhanh (Thay thế hoàn hảo cho Flex-center)
+@mixin grid-center() {
+  display: grid;
+  place-items: center;
+}
+
+// 5. Lưới có Sidebar và Main Content cố định tỷ lệ
+@mixin grid-sidebar-layout($sidebar-width: 250px, $gap: 24px) {
+  display: grid;
+  grid-template-columns: $sidebar-width 1fr;
+  gap: $gap;
+}
+
+// ==========================================
+// MIXIN DÀNH CHO THẺ CON (GRID ITEM)
+// ==========================================
+
+// 6. Gộp cột theo số lượng cột
+@mixin col-span($span: 1) {
+  grid-column: span $span;
+}
+
+// 7. Gộp hàng theo số lượng hàng
+@mixin row-span($span: 1) {
+  grid-row: span $span;
+}
+
+// Đặt item theo line cụ thể khi cần kiểm soát vị trí chính xác.
+@mixin col-range($start, $end) {
+  grid-column: #{$start} / #{$end};
+}
+
+@mixin row-range($start, $end) {
+  grid-row: #{$start} / #{$end};
+}
+
+//

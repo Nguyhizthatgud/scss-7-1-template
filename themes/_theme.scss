@@ -1,0 +1,27 @@
+@use "../abstracts/variables" as tokens;
+
+:root {
+  color-scheme: light;
+
+  @each $name, $value in tokens.$theme-colors-light {
+    --color-#{$name}: #{$value};
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  @each $name, $value in tokens.$theme-colors-dark {
+    --color-#{$name}: #{$value};
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    @each $name, $value in tokens.$theme-colors-dark {
+      --color-#{$name}: #{$value};
+    }
+  }
+}
