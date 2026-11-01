@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+packaged.json
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Sass cache
+.sass-cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Coverage and tooling caches
+coverage/
+.cache/
+.vite/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.idea/
+.history/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
