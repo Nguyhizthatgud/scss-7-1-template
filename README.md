@@ -159,42 +159,203 @@ Các partial bắt đầu bằng `_` không được compile trực tiếp. Ch�
 
 ## Cài đặt
 
-### Yêu cầu
+`scss-7-1-template` là bộ khung để đưa kiến trúc 7-1 vào một dự án frontend
+mới. Đây không phải là một ứng dụng chạy độc lập và cũng không cần được cài
+như một package runtime. Quy trình sử dụng là:
 
-- Node.js phiên bản LTS.
-- pnpm.
+1. Khởi tạo dự án Vite hoặc Next.js.
+2. Cài Sass trong chính dự án đó.
+3. Sao chép các thư mục SCSS của template vào dự án.
+4. Import `main.scss` một lần tại entry point của ứng dụng.
 
-Nếu chưa có pnpm, có thể kích hoạt qua Corepack:
+Các partial bắt đầu bằng `_` được nạp thông qua `main.scss`; không import từng
+partial riêng lẻ.
+
+### Chuẩn bị template
+
+Có thể lấy template bằng `git clone`:
 
 ```bash
-corepack enable
+git clone https://github.com/Nguyhizthatgud/scss-7-1-template.git
 ```
 
-### Cài dependency
-
-Từ thư mục gốc của template, chạy:
+Hoặc dùng `degit` để lấy snapshot mới nhất mà không sao chép lịch sử Git:
 
 ```bash
+npx degit Nguyhizthatgud/scss-7-1-template src/styles
+```
+
+Nên tải vào một thư mục tạm, sau đó chỉ sao chép các mục SCSS cần thiết vào
+dự án đích. Không chạy `degit` trực tiếp vào thư mục gốc của dự án nếu không
+muốn các file `README.md`, `package.json` và `pnpm-lock.yaml` của template bị
+đưa vào hoặc ghi đè lên dự án.
+
+Sau đó sao chép các mục sau vào thư mục source của dự án mới:
+
+```text
+abstracts/
+base/
+components/
+layout/
+pages/
+themes/
+vendors/
+main.scss
+```
+
+Có thể đặt chúng trực tiếp trong `src/styles/` (Vite) hoặc `styles/`/`src/styles/`
+(Next.js). Giữ nguyên cấu trúc thư mục để các đường dẫn `@use` trong
+`main.scss` và các partial hoạt động chính xác. Không cần sao chép
+`package.json` hoặc `pnpm-lock.yaml` của template vào dự án đích.
+
+### Kịch bản 1: Dự án mới khởi tạo bằng Vite
+
+#### 1. Tạo dự án và cài Sass
+
+Ví dụ với React và TypeScript:
+
+```bash
+pnpm create vite my-vite-app --template react-ts
+cd my-vite-app
 pnpm install
+pnpm add -D sass
 ```
 
-### Compile SCSS
+Với Vue hoặc JavaScript, thay `--template` bằng template tương ứng của Vite.
 
-Compile `main.scss` thành một file CSS:
+#### 2. Đưa template vào dự án
+
+Sao chép cấu trúc SCSS vào `src/styles/`:
+
+```text
+src/
+└── styles/
+    ├── abstracts/
+    ├── base/
+    ├── components/
+    ├── layout/
+    ├── pages/
+    ├── themes/
+    ├── vendors/
+    └── main.scss
+```
+
+Có thể sao chép thủ công bằng File Explorer hoặc dùng lệnh sao chép phù hợp
+với hệ điều hành. Chỉ cần đưa các thư mục và file SCSS nêu ở phần [Chuẩn bị
+template](#chuẩn-bị-template) vào `src/styles/`.
+
+#### 3. Import và chạy dự án
+
+Import entry point một lần trong file entry của Vite:
+
+```tsx
+// src/main.tsx
+import "./styles/main.scss";
+```
+
+Với Vite vanilla hoặc Vue, import trong `src/main.ts` hoặc file entry tương
+ứng:
+
+```ts
+import "./styles/main.scss";
+```
+
+Chạy server phát triển:
 
 ```bash
-pnpm exec sass main.scss dist/main.css --no-source-map
+pnpm dev
 ```
 
-Sau đó thêm file CSS đã build vào HTML:
+Vite sẽ tự compile Sass, theo dõi thay đổi và cung cấp HMR. Khi triển khai,
+tạo bản build production:
 
-```html
-<link rel="stylesheet" href="./dist/main.css" />
+```bash
+pnpm build
 ```
+
+Không cần chạy `pnpm install`, `pnpm exec sass` hoặc `pnpm dev` trong thư mục
+`scss-7-1-template`; các lệnh phải được chạy trong thư mục `my-vite-app`.
+
+### Kịch bản 2: Dự án mới khởi tạo bằng Next.js
+
+#### 1. Tạo dự án và cài Sass
+
+Ví dụ dùng App Router và TypeScript:
+
+```bash
+pnpm create next-app@latest my-next-app
+cd my-next-app
+pnpm install
+pnpm add -D sass
+```
+
+Khi trình khởi tạo hỏi, có thể chọn `src/` directory hoặc không. Đặt template
+trong `src/styles/` nếu dự án dùng `src/app/`, hoặc trong `styles/` nếu
+`app/` nằm ở thư mục gốc.
+
+#### 2. Đưa template vào dự án
+
+Sao chép các thư mục SCSS và `main.scss` vào `src/styles/` hoặc `styles/`,
+giữ nguyên cấu trúc 7-1 như hướng dẫn ở phần [Chuẩn bị
+template](#chuẩn-bị-template).
+
+#### 3. Import trong App Router
+
+Import global stylesheet tại root layout. Với cấu trúc không có `src/`:
+
+```tsx
+// app/layout.tsx
+import "../styles/main.scss";
+```
+
+Với cấu trúc có `src/`:
+
+```tsx
+// src/app/layout.tsx
+import "../styles/main.scss";
+```
+
+#### 4. Import trong Pages Router
+
+Nếu dùng Pages Router, import tại `pages/_app.tsx`:
+
+```tsx
+// pages/_app.tsx
+import "../styles/main.scss";
+```
+
+Nếu thư mục là `src/pages/` và stylesheet ở `src/styles/`, dùng:
+
+```tsx
+// src/pages/_app.tsx
+import "../styles/main.scss";
+```
+
+Global stylesheet chỉ được import một lần tại `app/layout.tsx` hoặc
+`pages/_app.tsx`, không import trực tiếp trong component.
+
+#### 5. Chạy dự án
+
+```bash
+pnpm dev
+```
+
+Build và chạy production:
+
+```bash
+pnpm build
+pnpm start
+```
+
+Các lệnh trên cũng phải được chạy trong thư mục `my-next-app`, không phải trong
+thư mục của template.
 
 ## Ví dụ sử dụng
 
-### Sử dụng entry point trong một trang HTML
+### Sử dụng entry point với HTML thuần (tùy chọn)
+
+Nếu dùng template không qua Vite hoặc Next.js, có thể tự compile `main.scss`
+bằng Dart Sass rồi liên kết file CSS kết quả trong HTML:
 
 ```html
 <!doctype html>
@@ -273,7 +434,7 @@ Mặc định là light mode. Nếu người dùng không chọn thủ công, te
 Để ép light hoặc dark mode, thêm `data-theme` vào phần tử gốc:
 
 ```html
-<html lang="vi" data-theme="dark">
+<html lang="vi" data-theme="dark"></html>
 ```
 
 Các giá trị được hỗ trợ là `light` và `dark`. `data-theme="dark"` có độ ưu tiên cao hơn cài đặt hệ điều hành. Để chuyển lại chế độ tự động, xóa thuộc tính `data-theme`.
@@ -330,20 +491,20 @@ Tên trong map là tên dễ nhớ, còn function trả về giá trị CSS chu�
 
 Các nhóm giá trị hiện có:
 
-| Nhóm | Một số key |
-| --- | --- |
-| `display` | `block`, `flex`, `grid`, `none` |
-| `position` | `relative`, `absolute`, `fixed`, `sticky` |
-| `overflow` | `visible`, `hidden`, `clip`, `auto` |
-| `flex-direction` | `row`, `row-reverse`, `column`, `column-reverse` |
-| `flex-wrap` | `nowrap`, `wrap`, `wrap-reverse` |
-| `justify-content` | `start`, `center`, `between`, `around`, `evenly` |
-| `align-items` | `start`, `center`, `end`, `baseline`, `stretch` |
-| `text-align` | `left`, `center`, `right`, `justify` |
-| `text-transform` | `none`, `uppercase`, `lowercase`, `capitalize` |
-| `object-fit` | `contain`, `cover`, `fill`, `none` |
-| `cursor` | `auto`, `default`, `pointer`, `grab`, `not-allowed` |
-| `visibility` | `visible`, `hidden`, `collapse` |
+| Nhóm              | Một số key                                          |
+| ----------------- | --------------------------------------------------- |
+| `display`         | `block`, `flex`, `grid`, `none`                     |
+| `position`        | `relative`, `absolute`, `fixed`, `sticky`           |
+| `overflow`        | `visible`, `hidden`, `clip`, `auto`                 |
+| `flex-direction`  | `row`, `row-reverse`, `column`, `column-reverse`    |
+| `flex-wrap`       | `nowrap`, `wrap`, `wrap-reverse`                    |
+| `justify-content` | `start`, `center`, `between`, `around`, `evenly`    |
+| `align-items`     | `start`, `center`, `end`, `baseline`, `stretch`     |
+| `text-align`      | `left`, `center`, `right`, `justify`                |
+| `text-transform`  | `none`, `uppercase`, `lowercase`, `capitalize`      |
+| `object-fit`      | `contain`, `cover`, `fill`, `none`                  |
+| `cursor`          | `auto`, `default`, `pointer`, `grab`, `not-allowed` |
+| `visibility`      | `visible`, `hidden`, `collapse`                     |
 
 Nếu truyền sai nhóm hoặc key, Sass sẽ dừng compile và báo lỗi cụ thể. Điều này giúp phát hiện typo sớm:
 
@@ -561,11 +722,7 @@ Các preset animation không tự động áp dụng media query để bạn v�
 
 ```scss
 .button {
-  @include mx.transition(
-    (background-color, color, transform),
-    200ms,
-    ease-out
-  );
+  @include mx.transition((background-color, color, transform), 200ms, ease-out);
 }
 ```
 
