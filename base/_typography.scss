@@ -1,0 +1,86 @@
+// src/styles/base/_typography.scss
+
+:root {
+  // 1. Hệ thống Font (dễ dàng đổi sang Google Sans Flex, Inter, Roboto... ở từng dự án)
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  // 2. Hệ thống Màu chữ
+  --text-color: #0f172a;
+  --text-muted: #64748b;
+  --heading-color: #0f172a;
+
+  // 3. Tỷ lệ & Khoảng cách dòng
+  --text-base: 1rem; // 16px
+  --leading-base: 1.6;
+  --leading-heading: 1.25;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  color: var(--text-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+  color: var(--heading-color);
+  letter-spacing: -0.02em;
+  text-wrap: balance; // Tự cân đối số chữ trên các dòng tiêu đề, tránh rớt 1 chữ lẻ loi
+}
+
+// Tự co giãn mượt từ Mobile (375px) lên Desktop (1280px) mà không cần @media
+h1 {
+  font-size: clamp(1.75rem, 3vw + 1rem, 2.75rem); // 28px → 44px
+}
+
+h2 {
+  font-size: clamp(1.5rem, 2vw + 0.875rem, 2.125rem); // 24px → 34px
+}
+
+h3 {
+  font-size: clamp(1.25rem, 1.5vw + 0.75rem, 1.625rem); // 20px → 26px
+}
+
+h4 {
+  font-size: clamp(1.125rem, 1vw + 0.75rem, 1.375rem); // 18px → 22px
+}
+
+h5 {
+  font-size: 1.0625rem; // 17px
+}
+
+h6 {
+  font-size: 0.9375rem; // 15px
+}
+
+p {
+  text-wrap: pretty; // Hạn chế từ đơn lẻ nằm trơ trọi ở dòng cuối đoạn văn
+}
+
+small {
+  font-size: 0.8125rem; // 13px
+  color: var(--text-muted);
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+code,
+kbd,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
